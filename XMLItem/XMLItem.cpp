@@ -37,8 +37,6 @@ void XMLItem::setCategory(const std::string &category) {
     this->category = category;
 }
 
-void XMLItem::print_item() const {
-    cout << "Title " << title << endl;
-    cout << "Link " << link << endl;
-    cout << "Category " << category << endl;
+nlohmann::json XMLItem::toJson() const {
+    return {{"title", title}, {"link", link}, {"category", category}};
 }

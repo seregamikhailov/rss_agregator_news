@@ -10,6 +10,7 @@ using namespace std;
 using json = nlohmann::json;
 
 const string RSSFONTANKA = "https://www.fontanka.ru/rss-feeds/rss.xml";
+const string RSSRIA = "https://ria.ru/export/rss2/archive/index.xml";
 
 vector<XMLItem> fetchRSS(const string &url);
 
@@ -18,9 +19,41 @@ size_t write_callback(void *contents, size_t size, size_t nmemb, string *userdat
 int main() {
     system("chcp 65001");
     vector<XMLItem> rssVector = fetchRSS(RSSFONTANKA);
-    for (int i = 0; i < rssVector.size(); i++) {
-        rssVector[i].print_item();
-    }
+    httplib::Server svr;
+
+    svr.Get("/news", [](const httplib::Request &req, httplib::Response &res) {
+        res.set_header("Access-Control-Allow-Origin", "*");
+        try {
+            string rssUrl = RSSFONTANKA;
+            if (req.has_param("source")) {
+                string source = req.get_param_value("source");
+                if (source == "ria") {
+                    rssUrl = RSSRIA;
+                } else if (source != "fontanka") {
+                    res.status = 400;
+                    res.set_content("Неверный параметр source. Допустимые значения: fontanka, ria.", "text/plain");
+                    return;
+                }
+            }
+
+            vector<XMLItem> items = fetchRSS(rssUrl);
+            json responseJson = json::array();
+
+            for (const auto &item: items) {
+                responseJson.push_back(item.toJson());
+            }
+
+            res.set_content(responseJson.dump(4), "application/json");
+        } catch (const exception &e) {
+            res.status = 500;
+            res.set_content(string("Ошибка сервера: ") + e.what(), "text/plain");
+        }
+    });
+
+
+    cout << "Сервер запущен на http://localhost:8080/news\n";
+    svr.listen("0.0.0.0", 8080);
+
     return 0;
 }
 

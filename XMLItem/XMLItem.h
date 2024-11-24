@@ -4,6 +4,7 @@
 
 #ifndef XMLITEM_H
 #define XMLITEM_H
+#include <json.hpp>
 #include <string>
 using namespace std;
 
@@ -29,7 +30,7 @@ public:
 
     void setCategory(const std::string &category);
 
-    void print_item() const;
+    nlohmann::json toJson() const;
 };
 
 
