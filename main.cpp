@@ -11,6 +11,7 @@ using json = nlohmann::json;
 
 const string RSSFONTANKA = "https://www.fontanka.ru/rss-feeds/rss.xml";
 const string RSSRIA = "https://ria.ru/export/rss2/archive/index.xml";
+const string RSSE1 = "https://www.e1.ru/rss-feeds/rss.xml";
 
 vector<XMLItem> fetchRSS(const string &url);
 
@@ -29,6 +30,8 @@ int main() {
                 string source = req.get_param_value("source");
                 if (source == "ria") {
                     rssUrl = RSSRIA;
+                } else if (source == "e1") {
+                    rssUrl = RSSE1;
                 } else if (source != "fontanka") {
                     res.status = 400;
                     res.set_content("Неверный параметр source. Допустимые значения: fontanka, ria.", "text/plain");
