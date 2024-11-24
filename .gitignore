@@ -1,0 +1,48 @@
+# Файлы сборки
+build/
+cmake-build-*/
+
+# Скомпилированные бинарные файлы
+*.o
+*.obj
+*.so
+*.dll
+*.dylib
+*.lib
+*.exe
+
+# Логи и временные файлы
+*.log
+*.tmp
+*.temp
+*.swp
+*.swo
+*.bak
+*.~*
+
+# Файлы IDE
+.idea/
+*.vcxproj*
+*.sln
+*.user
+*.ds_store
+
+# Make и CMake
+Makefile
+CMakeFiles/
+CMakeCache.txt
+compile_commands.json
+CTestTestfile.cmake
+cmake_install.cmake
+
+# Системные файлы
+Thumbs.db
+.DS_Store
+
+# Docker
+docker-compose.override.yml
+*.env
+
+#TinyXML2 CURL
+*.xml
+*.curlrc
