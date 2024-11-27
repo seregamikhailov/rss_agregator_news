@@ -11,7 +11,7 @@ using json = nlohmann::json;
 
 const string RSSFONTANKA = "https://www.fontanka.ru/rss-feeds/rss.xml";
 const string RSSRIA = "https://ria.ru/export/rss2/archive/index.xml";
-const string RSSE1 = "https://www.e1.ru/rss-feeds/rss.xml";
+const string RSSRBC = "https://rssexport.rbc.ru/rbcnews/news/30/full.rss";
 
 vector<XMLItem> fetchRSS(const string &url);
 
@@ -30,22 +30,45 @@ int main() {
                 string source = req.get_param_value("source");
                 if (source == "ria") {
                     rssUrl = RSSRIA;
-                } else if (source == "e1") {
-                    rssUrl = RSSE1;
+                } else if (source == "rbc") {
+                    rssUrl = RSSRBC;
                 } else if (source != "fontanka") {
                     res.status = 400;
-                    res.set_content("Неверный параметр source. Допустимые значения: fontanka, ria.", "text/plain");
+                    res.set_content("Неверный параметр source. Допустимые значения: fontanka, ria, rbc", "text/plain");
                     return;
                 }
             }
 
             vector<XMLItem> items = fetchRSS(rssUrl);
-            json responseJson = json::array();
 
+            if (req.has_param("keywords")) {
+                string keywords = req.get_param_value("keywords");
+                vector<string> keywordList;
+                istringstream ss(keywords);
+                string keyword;
+                while (getline(ss, keyword, ',')) {
+                    keywordList.push_back(keyword);
+                }
+
+                items.erase(remove_if(items.begin(), items.end(), [&keywordList](const XMLItem &item) {
+                    for (const auto &kw: keywordList) {
+                        if (item.getTitle().find(kw) != string::npos || item.getCategory().find(kw) != string::npos) {
+                            return false;
+                        }
+                    }
+                    return true;
+                }), items.end());
+            }
+
+            if (items.empty()) {
+                res.set_content("[]", "application/json");
+                return;
+            }
+
+            json responseJson = json::array();
             for (const auto &item: items) {
                 responseJson.push_back(item.toJson());
             }
-
             res.set_content(responseJson.dump(4), "application/json");
         } catch (const exception &e) {
             res.status = 500;
