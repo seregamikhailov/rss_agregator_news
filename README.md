@@ -4,7 +4,7 @@
 
 ## Описание
 
-Этот проект реализует сервер на C++, который получает новости из трех источников RSS: [Fontanka](https://www.fontanka.ru/rss-feeds/rss.xml), [RIA](https://ria.ru/export/rss2/archive/index.xml) и [E1](https://www.e1.ru/rss-feeds/rss.xml). Сервер позволяет пользователю запросить новости через HTTP API, указывая параметр `source`, чтобы выбрать источник новостей.
+Этот проект реализует сервер на C++, который получает новости из трех источников RSS: [Fontanka](https://www.fontanka.ru/rss-feeds/rss.xml), [RIA](https://ria.ru/export/rss2/archive/index.xml) и [RBC](https://rssexport.rbc.ru/rbcnews/news/30/full.rss). Сервер позволяет пользователю запросить новости через HTTP API, указывая параметр `source`, чтобы выбрать источник новостей.
 
 ## Функции
 
@@ -12,7 +12,7 @@
 - API с возможностью выбора источника новостей:
   - `source=fontanka` — новости с Fontanka.
   - `source=ria` — новости с RIA.
-  - `source=e1` - новости с E1.
+  - `source=rbc` - новости с RBC.
 - Ответы в формате JSON.
 
 ## Технологии
