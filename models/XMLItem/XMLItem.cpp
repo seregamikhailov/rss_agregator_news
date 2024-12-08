@@ -2,22 +2,21 @@
 
 #include <iostream>
 #include <string>
-using namespace std;
 
 
-XMLItem::XMLItem(const string &title, const string &link, const string &category): title(title), link(link),
+XMLItem::XMLItem(const std::string &title, const std::string &link, const std::string &category): title(title), link(link),
     category(category) {
 };
 
-const string &XMLItem::getTitle() const {
+const std::string &XMLItem::getTitle() const {
     return title;
 }
 
-const string &XMLItem::getLink() const {
+const std::string &XMLItem::getLink() const {
     return link;
 }
 
-const string &XMLItem::getCategory() const {
+const std::string &XMLItem::getCategory() const {
     return category;
 }
 

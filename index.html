@@ -1,9 +1,9 @@
-<body>
+<!-- <body>
     <h1>Новости</h1>
     <select id="source-select">
         <option value="fontanka">Fontanka</option>
         <option value="ria">RIA</option>
-        <option value="rbc">RBC</option>
+        <option value="rbc">RBC</option>   
     </select>
     <br>
     <label for="keywords">Ключевые слова:</label>
@@ -18,6 +18,69 @@
             const keywords = document.getElementById('keywords').value;
 
             let url = `http://localhost:8080/news?source=${source}`;
+            if (keywords) {
+                url += `&keywords=${encodeURIComponent(keywords)}`;
+            }
+
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Ошибка сервера');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const newsList = document.getElementById('news-list');
+                    newsList.innerHTML = ''; 
+                    if (data.length === 0) {
+                        const li = document.createElement('li');
+                        li.textContent = 'Нет новостей по заданным ключевым словам.';
+                        newsList.appendChild(li);
+                    } else {
+                        data.forEach(item => {
+                            const li = document.createElement('li');
+                            li.innerHTML = `<strong>${item.title}</strong><br><a href="${item.link}" target="_blank">Перейти к новости</a><br><small>${item.category}</small>`;
+                            newsList.appendChild(li);
+                        });
+                    }
+                })
+                .catch(error => {
+                    alert('Ошибка при получении новостей: ' + error);
+                });
+        });
+    </script>
+</body> -->
+
+
+<body>
+    <h1>Новости</h1>
+    <select id="source-select">
+        <option value="fontanka">Fontanka</option>
+        <option value="ria">RIA</option>
+        <option value="rbc">RBC</option>   
+    </select>
+    <br>
+    <label for="keywords">Ключевые слова:</label>
+    <input type="text" id="keywords" placeholder="Например, Политех" />
+    <br>
+    <label for="num-news">Количество новостей:</label>
+    <select id="num-news">
+        <option value="10">10</option>
+        <option value="20">20</option>
+        <option value="50">50</option>
+        <option value="100">100</option>
+    </select>
+    <br>
+    <button id="fetch-news-btn">Получить новости</button>
+    <ul id="news-list"></ul>
+
+    <script>
+        document.getElementById('fetch-news-btn').addEventListener('click', function () {
+            const source = document.getElementById('source-select').value;
+            const keywords = document.getElementById('keywords').value;
+            const numNews = document.getElementById('num-news').value;
+
+            let url = `http://localhost:8080/news?source=${source}&limit=${numNews}`;
             if (keywords) {
                 url += `&keywords=${encodeURIComponent(keywords)}`;
             }

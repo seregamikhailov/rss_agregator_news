@@ -2,23 +2,22 @@
 #define XMLITEM_H
 #include <json.hpp>
 #include <string>
-using namespace std;
 
 
 class XMLItem {
 private:
-    string title;
-    string link;
-    string category;
+    std::string title;
+    std::string link;
+    std::string category;
 
 public:
-    XMLItem(const string &title = "", const string &link = "", const string &category = "");
+    XMLItem(const std::string &title = "", const std::string &link = "", const std::string &category = "");
 
-    const string &getTitle() const;
+    const std::string &getTitle() const;
 
-    const string &getLink() const;
+    const std::string &getLink() const;
 
-    const string &getCategory() const;
+    const std::string &getCategory() const;
 
     void setTitle(const std::string &title);
 

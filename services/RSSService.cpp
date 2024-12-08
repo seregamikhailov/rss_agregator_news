@@ -2,7 +2,7 @@
 #include <RSSFetcher.h>
 #include <sstream>
 
-std::vector<XMLItem> RSSService::getFilteredNews(const std::string &source, const std::string &keywords) {
+std::vector<XMLItem> RSSService::getFilteredNews(const std::string &source, const std::string &keywords, int limit) {
     RSSFetcher fetcher;
     std::vector<XMLItem> items = fetcher.fetch(source);
 
@@ -14,6 +14,9 @@ std::vector<XMLItem> RSSService::getFilteredNews(const std::string &source, cons
             keywordList.push_back(keyword);
         }
         items = fetcher.filterByKeywords(items, keywordList);
+    }
+    if (limit > 0 && limit < items.size()) {
+        items.resize(limit);
     }
     return items;
 }

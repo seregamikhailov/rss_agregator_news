@@ -6,5 +6,5 @@
 
 class RSSService {
 public:
-    std::vector<XMLItem> getFilteredNews(const std::string &source, const std::string &keywords);
+    std::vector<XMLItem> getFilteredNews(const std::string &source, const std::string &keywords,int limit);
 };

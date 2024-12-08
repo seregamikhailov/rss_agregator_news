@@ -14,7 +14,7 @@ void NewsController::setupRoutes(httplib::Server &server) {
             RSSService rssService;
             std::string source = req.get_param_value("source");
             std::string keywords = req.get_param_value("keywords");
-
+            int limit = req.has_param("limit") ? std::stoi(req.get_param_value("limit")) : 10;
             auto it = rssMap.find(source);
             if (it == rssMap.end()) {
                 res.status = 400;
@@ -22,7 +22,7 @@ void NewsController::setupRoutes(httplib::Server &server) {
                 return;
             }
 
-            auto items = rssService.getFilteredNews(it->second, keywords);
+            auto items = rssService.getFilteredNews(it->second, keywords,limit);
             if (items.empty()) {
                 res.set_content("[]", "application/json");
                 return;
