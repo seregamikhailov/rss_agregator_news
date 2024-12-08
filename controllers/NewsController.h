@@ -2,10 +2,10 @@
 #define NEWSCONTROLLER_H
 #include <httplib.h>
 
-
+#include "NewsService.h"
 class NewsController {
 public:
-    void setupRoutes(httplib::Server &server);
+    void setupRoutes(httplib::Server &server, NewsService &newsService);
 };
 
 

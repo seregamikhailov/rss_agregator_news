@@ -4,14 +4,13 @@
 
 #include "ConfigLoader.h"
 
-void NewsController::setupRoutes(httplib::Server &server) {
+void NewsController::setupRoutes(httplib::Server &server,NewsService &newsService) {
     std::unordered_map<std::string, std::string> rssMap = ConfigLoader::loadRSSConfig(
         "/app/config/rss_sources.json");
 
-    server.Get("/news", [rssMap](const httplib::Request &req, httplib::Response &res) {
+    server.Get("/news", [&newsService,rssMap](const httplib::Request &req, httplib::Response &res) {
         res.set_header("Access-Control-Allow-Origin", "*");
         try {
-            RSSService rssService;
             std::string source = req.get_param_value("source");
             std::string keywords = req.get_param_value("keywords");
             int limit = req.has_param("limit") ? std::stoi(req.get_param_value("limit")) : 10;
@@ -22,7 +21,7 @@ void NewsController::setupRoutes(httplib::Server &server) {
                 return;
             }
 
-            auto items = rssService.getFilteredNews(it->second, keywords,limit);
+            auto items = newsService.getFilteredNews(it->second, keywords,limit);
             if (items.empty()) {
                 res.set_content("[]", "application/json");
                 return;
