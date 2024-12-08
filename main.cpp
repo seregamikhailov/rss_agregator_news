@@ -6,9 +6,7 @@
 #include <vector>
 #include "XMLItem/XMLItem.h"
 #include <curl/curl.h>
-using namespace std;
 using json = nlohmann::json;
-
 const string RSSFONTANKA = "https://www.fontanka.ru/rss-feeds/rss.xml";
 const string RSSRIA = "https://ria.ru/export/rss2/archive/index.xml";
 const string RSSRBC = "https://rssexport.rbc.ru/rbcnews/news/30/full.rss";
@@ -17,24 +15,29 @@ vector<XMLItem> fetchRSS(const string &url);
 
 size_t write_callback(void *contents, size_t size, size_t nmemb, string *userdata);
 
+vector<XMLItem> filterNewsByKeywords(const vector<XMLItem> &items, const vector<string> &keywordList);
+
 int main() {
     system("chcp 65001");
-    vector<XMLItem> rssVector = fetchRSS(RSSFONTANKA);
     httplib::Server svr;
-
-    svr.Get("/news", [](const httplib::Request &req, httplib::Response &res) {
+    std::unordered_map<std::string, std::string> rssMap = {
+        {"fontanka", RSSFONTANKA},
+        {"ria", RSSRIA},
+        {"rbc", RSSRBC}
+    };
+    svr.Get("/news", [rssMap](const httplib::Request &req, httplib::Response &res) {
         res.set_header("Access-Control-Allow-Origin", "*");
         try {
-            string rssUrl = RSSFONTANKA;
+            string rssUrl;
             if (req.has_param("source")) {
                 string source = req.get_param_value("source");
-                if (source == "ria") {
-                    rssUrl = RSSRIA;
-                } else if (source == "rbc") {
-                    rssUrl = RSSRBC;
-                } else if (source != "fontanka") {
+                for (auto &item: rssMap) {
+                    if (source == item.first) {
+                        rssUrl = item.second;
+                    }
+                }
+                if (rssUrl == "") {
                     res.status = 400;
-                    res.set_content("Неверный параметр source. Допустимые значения: fontanka, ria, rbc", "text/plain");
                     return;
                 }
             }
@@ -49,15 +52,7 @@ int main() {
                 while (getline(ss, keyword, ',')) {
                     keywordList.push_back(keyword);
                 }
-
-                items.erase(remove_if(items.begin(), items.end(), [&keywordList](const XMLItem &item) {
-                    for (const auto &kw: keywordList) {
-                        if (item.getTitle().find(kw) != string::npos || item.getCategory().find(kw) != string::npos) {
-                            return false;
-                        }
-                    }
-                    return true;
-                }), items.end());
+                items = filterNewsByKeywords(items, keywordList);
             }
 
             if (items.empty()) {
@@ -75,8 +70,6 @@ int main() {
             res.set_content(string("Ошибка сервера: ") + e.what(), "text/plain");
         }
     });
-
-
     cout << "Сервер запущен на http://localhost:8080/news\n";
     svr.listen("0.0.0.0", 8080);
 
@@ -97,7 +90,7 @@ vector<XMLItem> fetchRSS(const string &url) {
         curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &rssData);
-        CURLcode response = curl_easy_perform(curl);
+        CURLcode response = curl_easy_perform(curl); // возвращаем код состояния выполнения запроса
 
         if (response == CURLE_OK) {
             tinyxml2::XMLDocument doc;
@@ -124,4 +117,21 @@ vector<XMLItem> fetchRSS(const string &url) {
         cerr << "Не удалось инициализировать CURL\n";
     }
     return items;
+}
+
+vector<XMLItem> filterNewsByKeywords(const vector<XMLItem> &items, const vector<string> &keywordList) {
+    vector<XMLItem> filteredItems;
+    for (const auto &item: items) {
+        bool matchFound = false;
+        for (const auto &kw: keywordList) {
+            if (item.getTitle().find(kw) != string::npos || item.getCategory().find(kw) != string::npos) {
+                matchFound = true;
+                break;
+            }
+        }
+        if (matchFound) {
+            filteredItems.push_back(item);
+        }
+    }
+    return filteredItems;
 }

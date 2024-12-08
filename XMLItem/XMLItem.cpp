@@ -1,7 +1,3 @@
-//
-// Created by Serg on 25.11.2024.
-//
-
 #include "XMLItem.h"
 
 #include <iostream>

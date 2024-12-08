@@ -1,7 +1,3 @@
-//
-// Created by Serg on 25.11.2024.
-//
-
 #ifndef XMLITEM_H
 #define XMLITEM_H
 #include <json.hpp>
