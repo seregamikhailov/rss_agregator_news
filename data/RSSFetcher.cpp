@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "XMLItem/XMLItem.h"
+#include "ParseException.h"
 
 std::vector<XMLItem> RSSFetcher::fetch(const std::string &url) {
     CurlWrapper curlWrapper;
@@ -11,16 +12,20 @@ std::vector<XMLItem> RSSFetcher::fetch(const std::string &url) {
     std::vector<XMLItem> items;
 
     tinyxml2::XMLDocument doc;
-    if (doc.Parse(rssData.c_str()) == tinyxml2::XML_SUCCESS) {
-        auto *channel = doc.FirstChildElement("rss")->FirstChildElement("channel");
-        auto *item = channel->FirstChildElement("item");
-        while (item) {
-            const char *title = item->FirstChildElement("title")->GetText();
-            const char *link = item->FirstChildElement("link")->GetText();
-            items.emplace_back(title ? title : "", link ? link : "");
-            item = item->NextSiblingElement("item");
-        }
+    if (doc.Parse(rssData.c_str()) != tinyxml2::XML_SUCCESS) {
+        throw ParseException("Ошибка разбора RSS-данных");
     }
+
+    auto *channel = doc.FirstChildElement("rss")->FirstChildElement("channel");
+    if (!channel) throw ParseException("Элемент channel не найден");
+    auto *item = channel->FirstChildElement("item");
+    while (item) {
+        const char *title = item->FirstChildElement("title")->GetText();
+        const char *link = item->FirstChildElement("link")->GetText();
+        items.emplace_back(title ? title : "", link ? link : "");
+        item = item->NextSiblingElement("item");
+    }
+
     return items;
 }
 

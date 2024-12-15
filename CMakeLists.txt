@@ -22,7 +22,8 @@ add_executable(rss_agregator_rss main.cpp
         utils/ConfigLoader/ConfigLoader.cpp
         utils/CurlWrapper/CurlWrapper.cpp
         exceptions/ConfigLoadException.h
-        exceptions/NotFoundException.h)
+        exceptions/NotFoundException.h
+        exceptions/ParseException.h)
 find_package(CURL REQUIRED)
 
 if (WIN32)
