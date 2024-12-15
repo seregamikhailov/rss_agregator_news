@@ -12,7 +12,6 @@ include_directories(utils)
 include_directories(utils/ConfigLoader)
 include_directories(utils/CurlWrapper)
 include_directories(exceptions)
-
 add_executable(rss_agregator_rss main.cpp
         models/XMLItem/XMLItem.h
         models/XMLItem/XMLItem.cpp
@@ -22,7 +21,8 @@ add_executable(rss_agregator_rss main.cpp
         services/RSSService.cpp
         utils/ConfigLoader/ConfigLoader.cpp
         utils/CurlWrapper/CurlWrapper.cpp
-        exceptions/ConfigLoadException.h)
+        exceptions/ConfigLoadException.h
+        exceptions/NotFoundException.h)
 find_package(CURL REQUIRED)
 
 if (WIN32)

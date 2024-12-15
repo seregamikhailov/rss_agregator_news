@@ -3,6 +3,7 @@
 #include <RSSService.h>
 
 #include "ConfigLoader.h"
+#include "NotFoundException.h"
 
 void NewsController::setupRoutes(httplib::Server &server, NewsService &newsService) {
     std::unordered_map<std::string, std::string> rssMap = ConfigLoader::loadRSSConfig(
@@ -15,9 +16,7 @@ void NewsController::setupRoutes(httplib::Server &server, NewsService &newsServi
             int limit = req.has_param("limit") ? std::stoi(req.get_param_value("limit")) : 10;
             auto it = rssMap.find(source);
             if (it == rssMap.end()) {
-                res.status = 400;
-                res.set_content("Источник не найден", "text/plain");
-                return;
+                throw NotFoundException("Источник не найден");
             }
 
             auto items = newsService.getFilteredNews(it->second, keywords, limit);
@@ -25,13 +24,16 @@ void NewsController::setupRoutes(httplib::Server &server, NewsService &newsServi
                 res.set_content("[]", "application/json");
                 return;
             }
-
             nlohmann::json responseJson = nlohmann::json::array();
             for (const auto &item: items) {
                 responseJson.push_back(item.toJson());
             }
             res.set_content(responseJson.dump(4), "application/json");
-        } catch (const std::exception &e) {
+        } catch (const NotFoundException &e) {
+            res.status = 400;
+            res.set_content(e.what(), "text/plain");
+        }
+        catch (const std::exception &e) {
             res.status = 500;
             res.set_content("Ошибка сервера: " + std::string(e.what()), "text/plain");
         }
