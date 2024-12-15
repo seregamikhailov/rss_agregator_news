@@ -1,0 +1,48 @@
+@startuml
+
+class NewsController {
+    +setupRoutes(server: httplib::Server, newsService: NewsService)
+}
+
+interface NewsService  {
+    +getFilteredNews(source: string, keywords: string, limit: int): vector<XMLItem>
+}
+
+class RSSService {
+    +getFilteredNews(source: string, keywords: string, limit: int): vector<XMLItem>
+}
+
+class RSSFetcher {
+    +fetch(url: string): vector<XMLItem>
+    +filterByKeywords(items: vector<XMLItem>, keywordList: vector<string>): vector<XMLItem>
+}
+
+class XMLItem {
+    -title: string
+    -link: string
+    -category: string
+    +getTitle(): string
+    +getLink(): string
+    +getCategory(): string
+    +setTitle(title: string)
+    +setLink(link: string)
+    +setCategory(category: string)
+    +toJson(): nlohmann::json9
+}
+
+class ConfigLoader {
+    +loadRSSConfig(configPath: string): unordered_map<string, string>
+}
+
+class CurlWrapper {
+    +fetchData(url: string): string
+}
+NewsService <|-- RSSService
+RSSService --> RSSFetcher
+RSSFetcher --> XMLItem
+NewsController --> ConfigLoader
+RSSFetcher --> CurlWrapper
+
+
+
+@enduml

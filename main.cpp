@@ -4,9 +4,9 @@
 #include "RSSService.h"
 
 int main() {
+    system("chcp 65001");
     httplib::Server server;
     RSSService rssService;
-
     NewsController controller;
     controller.setupRoutes(server, rssService);
     std::cout << "Сервер запущен на http://localhost:8080/news\n";

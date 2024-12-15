@@ -1,22 +1,30 @@
 #include "ConfigLoader.h"
 #include <json.hpp>
 #include <fstream>
-#include <iostream>
+#include "ConfigLoadException.h"
 using json = nlohmann::json;
-std::unordered_map<std::string, std::string> ConfigLoader::loadRSSConfig(const std::string& configPath) {
+
+std::unordered_map<std::string, std::string> ConfigLoader::loadRSSConfig(const std::string &configPath) {
     std::unordered_map<std::string, std::string> rssMap;
     std::ifstream file(configPath);
-
     if (!file) {
-        std::cerr << "Не удалось открыть файл конфигурации: " << configPath << std::endl;
-        return rssMap;
+        throw ConfigLoadException("Не удалось открыть файл конфигурации: " + configPath);
     }
-
     json config;
-    file >> config;
-
-    for (auto it = config.begin(); it != config.end(); ++it) {
-        rssMap[it.key()] = it.value();
+    try {
+        file >> config;
+    } catch (const json::parse_error &e) {
+        throw ConfigLoadException("Ошибка парсинга файла конфигурации: " + std::string(e.what()));
+    }
+    try {
+        for (const auto &[key, value]: config.items()) {
+            if (!value.is_string()) {
+                throw ConfigLoadException("Ожидалась строка для ключа: " + key);
+            }
+            rssMap[key] = value.get<std::string>();
+        }
+    } catch (const std::exception &e) {
+        throw ConfigLoadException("Ошибка обработки содержимого файла конфигурации: " + std::string(e.what()));
     }
     return rssMap;
 }

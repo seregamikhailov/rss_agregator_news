@@ -13,7 +13,4 @@ public:
     static std::unordered_map<std::string, std::string> loadRSSConfig(const std::string& configPath);
 };
 
-
-
-
 #endif //CONFIGLOADER_H

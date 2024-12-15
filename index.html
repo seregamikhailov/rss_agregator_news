@@ -1,6 +1,5 @@
 <head>
     <style>
-        /* Базовые стили */
         * {
             margin: 0;
             padding: 0;
@@ -13,15 +12,15 @@
             align-items: center;
             height: 100vh;
             font-family: 'Arial', sans-serif;
-            background-color: #9ff7ff; /* Светлый фон */
+            background-color: #9ff7ff; 
         }
 
-        /* Основной контейнер */
+   
         #app-container {
             display: flex;
             flex-direction: column;
             align-items: center;
-            background-color: #ffffff; /* Белый фон для карточки */
+            background-color: #ffffff; 
             border-radius: 20px;
             padding: 30px 40px;
             box-shadow: 0 10px 25px rgba(1, 5, 252, 0.582);
@@ -63,8 +62,6 @@
             background-color: #ffffff;
             box-shadow: 0 0 5px #000000;
         }
-
-        /* Кнопка */
         #fetch-news-btn {
             width: 100%;
             padding: 15px;
@@ -85,7 +82,6 @@
             transform: scale(0.98);
         }
 
-        /* Список новостей */
         #news-list {
             width: 100%;
             margin-top: 20px;
@@ -129,7 +125,6 @@
             color: #777;
         }
 
-        /* Стили для пустого списка */
         #news-list li.empty {
             text-align: center;
             font-size: 16px;
@@ -208,241 +203,3 @@
         });
     </script>
 </body>
-
-
-
-<!-- <head>
-    <style>
-        /* Базовые стили */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f6f9; /* Светлый фон */
-        }
-
-        /* Основной контейнер приложения */
-        #app {
-            display: flex;
-            align-items: center;
-            width: 100%;
-            max-width: 900px;
-            height: 100%;
-            transition: all 0.5s ease;
-        }
-
-        /* Контейнер формы */
-        #app-container {
-            display: flex;
-            flex-direction: column;
-            background-color: #ffffff; 
-            border-radius: 20px;
-            padding: 30px 40px;
-            box-shadow: 0 10px 25px rgba(1, 5, 252, 0.582);
-            width: 100%;
-            max-width: 500px;
-            transition: all 0.5s ease;
-        }
-
-        h1 {
-            margin-bottom: 20px;
-            color: #333;
-            font-size: 28px;
-        }
-
-        label {
-            margin-top: 10px;
-            font-size: 16px;
-            color: #555;
-            display: block;
-        }
-
-        select, input[type="text"] {
-            width: 100%;
-            padding: 10px 15px;
-            margin-top: 5px;
-            margin-bottom: 20px;
-            border-radius: 10px;
-            border: 1px solid #ddd;
-            background-color: #f9f9f9;
-            font-size: 16px;
-            color: #333;
-            transition: all 0.2s;
-        }
-
-        select:focus, input[type="text"]:focus {
-            outline: none;
-            border-color: #f05757; 
-            background-color: #ffffff;
-            box-shadow: 0 0 5px #000000;
-        }
-
-        #fetch-news-btn {
-            width: 100%;
-            padding: 15px;
-            font-size: 16px;
-            color: #fff;
-            background: linear-gradient(90deg, #4ef17c, #57f0e3);
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        #fetch-news-btn:hover {
-            background: linear-gradient(90deg, #ffffff, #4e9af1);
-        }
-
-        #fetch-news-btn:active {
-            transform: scale(0.98);
-        }
-
-        /* Список новостей */
-        #news-container {
-            width: 100%;
-            max-width: 1000px;
-            height: 100%;
-            padding: 30px 40px;
-            display: none;
-            flex-direction: column;
-            overflow-y: auto;
-        }
-
-        #news-list {
-            width: 100%;
-            list-style: none;
-            max-height: 500px;
-            overflow-y: auto;
-        }
-
-        #news-list li {
-            background-color: #ffffff;
-            border-radius: 10px;
-            padding: 15px 20px;
-            margin-bottom: 15px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-        }
-
-        #news-list li:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        #news-list li strong {
-            color: #333;
-            font-size: 18px;
-        }
-
-        #news-list li a {
-            color: #5792f0;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        #news-list li a:hover {
-            text-decoration: underline;
-        }
-
-        #news-list li small {
-            display: block;
-            margin-top: 10px;
-            color: #777;
-        }
-
-        #news-list li.empty {
-            text-align: center;
-            font-size: 16px;
-            color: #666;
-        }
-
-    </style>
-</head>
-
-<body>
-    <div id="app">
-        <div id="app-container">
-            <h1>Новости</h1>
-            <label for="source-select">Источник:</label>
-            <select id="source-select">
-                <option value="fontanka">Fontanka</option>
-                <option value="ria">RIA</option>
-                <option value="rbc">RBC</option>   
-            </select>
-
-            <label for="keywords">Ключевые слова:</label>
-            <input type="text" id="keywords" placeholder="Например, Политех" />
-
-            <label for="num-news">Количество новостей:</label>
-            <select id="num-news">
-                <option value="10">10</option>
-                <option value="20">20</option>
-                <option value="50">50</option>
-                <option value="100">100</option>
-            </select>
-
-            <button id="fetch-news-btn">Получить новости</button>
-        </div>
-
-        <div id="news-container">
-            <ul id="news-list"></ul>
-        </div>
-    </div>
-
-    <script>
-        document.getElementById('fetch-news-btn').addEventListener('click', function () {
-            const source = document.getElementById('source-select').value;
-            const keywords = document.getElementById('keywords').value;
-            const numNews = document.getElementById('num-news').value;
-
-            let url = `http://localhost:8080/news?source=${source}&limit=${numNews}`;
-            if (keywords) {
-                url += `&keywords=${encodeURIComponent(keywords)}`;
-            }
-
-            // Смещение контейнера
-            document.getElementById('app').style.transform = 'translateX(-50%)';
-            document.getElementById('news-container').style.display = 'flex';
-
-            fetch(url)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Ошибка сервера');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    const newsList = document.getElementById('news-list');
-                    newsList.innerHTML = '';
-                    if (data.length === 0) {
-                        const li = document.createElement('li');
-                        li.textContent = 'Нет новостей по заданным ключевым словам.';
-                        li.classList.add('empty');
-                        newsList.appendChild(li);
-                    } else {
-                        data.forEach(item => {
-                            const li = document.createElement('li');
-                            li.innerHTML = `
-                                <strong>${item.title}</strong>
-                                <br><a href="${item.link}" target="_blank">Перейти к новости</a>
-                                <br><small>${item.category}</small>
-                            `;
-                            newsList.appendChild(li);
-                        });
-                    }
-                })
-                .catch(error => {
-                    alert('Ошибка при получении новостей: ' + error);
-                });
-        });
-    </script>
-</body>
- -->
