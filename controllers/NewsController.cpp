@@ -18,7 +18,6 @@ void NewsController::setupRoutes(httplib::Server &server, NewsService &newsServi
             if (it == rssMap.end()) {
                 throw NotFoundException("Источник не найден");
             }
-
             auto items = newsService.getFilteredNews(it->second, keywords, limit);
             if (items.empty()) {
                 res.set_content("[]", "application/json");
@@ -30,8 +29,8 @@ void NewsController::setupRoutes(httplib::Server &server, NewsService &newsServi
             }
             res.set_content(responseJson.dump(4), "application/json");
         } catch (const NotFoundException &e) {
-            res.status = 400;
-            res.set_content(e.what(), "text/plain");
+            res.status = 404;
+            res.set_content("Нет такого источника: " + std::string(e.what()), "text/plain");
         }
         catch (const std::exception &e) {
             res.status = 500;

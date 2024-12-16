@@ -12,15 +12,15 @@
             align-items: center;
             height: 100vh;
             font-family: 'Arial', sans-serif;
-            background-color: #9ff7ff; 
+            background-color: #9ff7ff;
         }
 
-   
+
         #app-container {
             display: flex;
             flex-direction: column;
             align-items: center;
-            background-color: #ffffff; 
+            background-color: #ffffff;
             border-radius: 20px;
             padding: 30px 40px;
             box-shadow: 0 10px 25px rgba(1, 5, 252, 0.582);
@@ -58,10 +58,11 @@
 
         select:focus, input[type="text"]:focus {
             outline: none;
-            border-color: #f05757; 
+            border-color: #f05757;
             background-color: #ffffff;
             box-shadow: 0 0 5px #000000;
         }
+
         #fetch-news-btn {
             width: 100%;
             padding: 15px;
@@ -130,76 +131,90 @@
             font-size: 16px;
             color: #666;
         }
+
+        #error-message {
+            color: red;
+            font-size: 16px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
     </style>
 </head>
 
 <body>
-    <div id="app-container">
-        <h1>Новости</h1>
-        <label for="source-select">Источник:</label>
-        <select id="source-select">
-            <option value="fontanka">Fontanka</option>
-            <option value="ria">RIA</option>
-            <option value="rbc">RBC</option>   
-        </select>
+<div id="app-container">
+    <h1>Новости</h1>
+    <div id="error-message"></div>
+    <label for="source-select">Источник:</label>
+    <select id="source-select">
+        <option value="fontanka">Fontanka</option>
+        <option value="ria">RIA</option>
+        <option value="rbc">RBC</option>
+    </select>
 
-        <label for="keywords">Ключевые слова:</label>
-        <input type="text" id="keywords" placeholder="Например, Политех" />
+    <label for="keywords">Ключевые слова:</label>
+    <input type="text" id="keywords" placeholder="Например, Политех"/>
 
-        <label for="num-news">Количество новостей:</label>
-        <select id="num-news">
-            <option value="10">10</option>
-            <option value="20">20</option>
-            <option value="50">50</option>
-            <option value="100">100</option>
-        </select>
+    <label for="num-news">Количество новостей:</label>
+    <select id="num-news">
+        <option value="10">10</option>
+        <option value="20">20</option>
+        <option value="50">50</option>
+        <option value="100">100</option>
+    </select>
 
-        <button id="fetch-news-btn">Получить новости</button>
+    <button id="fetch-news-btn">Получить новости</button>
 
-        <ul id="news-list"></ul>
-    </div>
+    <ul id="news-list"></ul>
+</div>
 
-    <script>
-        document.getElementById('fetch-news-btn').addEventListener('click', function () {
-            const source = document.getElementById('source-select').value;
-            const keywords = document.getElementById('keywords').value;
-            const numNews = document.getElementById('num-news').value;
+<script>
+    document.getElementById('fetch-news-btn').addEventListener('click', function () {
+        const errorMessage = document.getElementById('error-message');
+        errorMessage.textContent = '';
+        const source = document.getElementById('source-select').value;
+        const keywords = document.getElementById('keywords').value;
+        const numNews = document.getElementById('num-news').value;
 
-            let url = `http://localhost:8080/news?source=${source}&limit=${numNews}`;
-            if (keywords) {
-                url += `&keywords=${encodeURIComponent(keywords)}`;
-            }
+        let url = `http://localhost:8080/news?source=${source}&limit=${numNews}`;
+        if (keywords) {
+            url += `&keywords=${encodeURIComponent(keywords)}`;
+        }
 
-            fetch(url)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Ошибка сервера');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    const newsList = document.getElementById('news-list');
-                    newsList.innerHTML = ''; 
-                    if (data.length === 0) {
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        throw new Error(`Ошибка: ${text} (Код ${response.status})`);
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                const newsList = document.getElementById('news-list');
+                newsList.innerHTML = '';
+                if (data.length === 0) {
+                    const li = document.createElement('li');
+                    li.textContent = 'Нет новостей по заданным ключевым словам.';
+                    li.classList.add('empty');
+                    newsList.appendChild(li);
+                } else {
+                    data.forEach(item => {
                         const li = document.createElement('li');
-                        li.textContent = 'Нет новостей по заданным ключевым словам.';
-                        li.classList.add('empty');
-                        newsList.appendChild(li);
-                    } else {
-                        data.forEach(item => {
-                            const li = document.createElement('li');
-                            li.innerHTML = `
+                        li.innerHTML = `
                                 <strong>${item.title}</strong>
                                 <br><a href="${item.link}" target="_blank">Перейти к новости</a>
                                 <br><small>${item.category}</small>
                             `;
-                            newsList.appendChild(li);
-                        });
-                    }
-                })
-                .catch(error => {
-                    alert('Ошибка при получении новостей: ' + error);
-                });
-        });
-    </script>
+                        newsList.appendChild(li);
+                    });
+                }
+            })
+            .catch(error => {
+                const errorMessage = document.getElementById('error-message');
+                errorMessage.textContent = error;
+                errorMessage.style.color = 'red';
+            });
+    });
+</script>
 </body>
