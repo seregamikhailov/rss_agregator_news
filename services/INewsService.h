@@ -1,4 +1,4 @@
-// NewsService.h
+// INewsService.h
 #ifndef NEWS_SERVICE_H
 #define NEWS_SERVICE_H
 
@@ -6,10 +6,10 @@
 #include <string>
 #include "XMLItem/XMLItem.h"
 
-class NewsService {
+class INewsService {
 public:
     virtual std::vector<XMLItem> getFilteredNews(const std::string &source, const std::string &keywords, int limit) = 0;
-    virtual ~NewsService() = default;
+    virtual ~INewsService() = default;
 };
 
 #endif
