@@ -1,13 +1,10 @@
 @startuml
-
-class NewsController {
-    +setupRoutes(server: httplib::Server, newsService: NewsService)
-}
-
-interface NewsService  {
+interface INewsService  {
     +getFilteredNews(source: string, keywords: string, limit: int): vector<XMLItem>
 }
-
+class NewsController {
+    +setupRoutes(server: httplib::Server, newsService: INewsService)
+}
 class RSSService {
     +getFilteredNews(source: string, keywords: string, limit: int): vector<XMLItem>
 }
@@ -27,7 +24,7 @@ class XMLItem {
     +setTitle(title: string)
     +setLink(link: string)
     +setCategory(category: string)
-    +toJson(): nlohmann::json9
+    +toJson(): nlohmann::json
 }
 
 class ConfigLoader {
@@ -37,12 +34,10 @@ class ConfigLoader {
 class CurlWrapper {
     +fetchData(url: string): string
 }
-NewsService <|-- RSSService
-RSSService --> RSSFetcher
-RSSFetcher --> XMLItem
-NewsController --> ConfigLoader
-RSSFetcher --> CurlWrapper
-
-
-
+NewsController o-- INewsService
+NewsController o-- ConfigLoader
+INewsService <|-- RSSService
+RSSService o-- RSSFetcher
+RSSFetcher o-- XMLItem
+RSSFetcher o--CurlWrapper
 @enduml
