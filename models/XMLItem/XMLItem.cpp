@@ -1,9 +1,6 @@
 #include "XMLItem.h"
 
-#include <iostream>
 #include <string>
-
-
 XMLItem::XMLItem(const std::string &title, const std::string &link, const std::string &category): title(title), link(link),
     category(category) {
 };

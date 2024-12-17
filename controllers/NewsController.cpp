@@ -7,7 +7,7 @@
 
 void NewsController::setupRoutes(httplib::Server &server, INewsService &newsService) {
     std::unordered_map<std::string, std::string> rssMap = ConfigLoader::loadRSSConfig(
-        "D:/rss_agregator_rss/config/rss_sources.json");
+        "/app/config/rss_sources.json");
     server.Get("/news", [&newsService,rssMap](const httplib::Request &req, httplib::Response &res) {
         res.set_header("Access-Control-Allow-Origin", "*");
         try {

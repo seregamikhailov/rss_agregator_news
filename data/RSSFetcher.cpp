@@ -16,7 +16,7 @@ std::vector<XMLItem> RSSFetcher::fetch(const std::string &url) {
         throw ParseException("Ошибка разбора RSS-данных");
     }
 
-    auto *channel = doc.FirstChildElement("rss")->FirstChildElement("channel");
+    tinyxml2::XMLElement *channel = doc.FirstChildElement("rss")->FirstChildElement("channel");
     if (!channel) throw ParseException("Элемент channel не найден");
     auto *item = channel->FirstChildElement("item");
     while (item) {
